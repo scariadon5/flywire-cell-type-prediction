@@ -10,9 +10,11 @@ rest to test. Neurons without a label at the task's level stay in the graph with
 never seeds and never scored.
 
 Output: data/splits/<task>.parquet, one row per proofread neuron, `root_id` plus one int8 role column
-per split (e.g. `frac05_r2`, `hemi_l2r`). data/splits_report.json records the sizes and is committed.
+per split (e.g. `frac05_r2`, `hemi_l2r`). data/splits_report.json records each split's sizes and an md5
+of its roles; it is committed, so a rebuild anywhere (e.g. Kaggle) is checked against it.
 """
 
+import hashlib
 import json
 import sys
 
@@ -107,13 +109,14 @@ def main() -> int:
             report[f"{task}/{name}"] = {
                 "seed": int(seeds.sum()), "val": int((r == VAL).sum()), "test": int((r == TEST).sum()),
                 "seed_classes": int(pd.Series(y[seeds]).nunique()),
+                "md5": hashlib.md5(r.tobytes()).hexdigest(),  # the exact roles, in root_id order
             }
         df.to_parquet(out_dir / f"{task}.parquet", index=False)
         print(f"{task}: {n_classes:,} classes, {len(split_names())} splits")
 
     path = config.DATA / "splits_report.json"
     if path.exists() and json.loads(path.read_text()) != report:
-        print(f"split sizes differ from the committed {path.name}; delete it to accept the new splits", file=sys.stderr)
+        print(f"splits differ from the committed {path.name}; delete it to accept the new splits", file=sys.stderr)
         return 1
     path.write_text(json.dumps(report, indent=1) + "\n")
     for key in ("cell_type/frac01_r0", "cell_type/frac80_r0", "cell_type/hemi_l2r", "super_class/frac01_r0"):

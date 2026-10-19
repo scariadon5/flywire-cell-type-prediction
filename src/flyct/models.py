@@ -54,5 +54,64 @@ def ntac(data, k=5):
     return topk, None
 
 
-MODELS = {"majority": majority, "lightgbm": lightgbm, "ntac": ntac}
-GRAPH_MODELS = {"ntac"}
+def partner_profile(A, part, k):
+    """Synapses received from and sent to each class, log-scaled and L2-normalised per neuron.
+    `part` holds a class per neuron, or -1 where unknown (those partners are left out)."""
+    from sklearn.preprocessing import normalize
+
+    from flyct.ntac import embed
+
+    E = embed(A, A.T.tocsr(), part, k)
+    E.data = np.log1p(E.data)
+    return normalize(E, norm="l2")
+
+
+def profile_lr(data, k=5, rounds=1):
+    """Logistic regression on the partner-type profile, trained on seeds. With rounds > 1, non-seed
+    partners are filled in with the previous round's predictions and the model is refitted, like
+    NTAC's iterations. Super class and class only on a laptop (dense k x 2k weights)."""
+    from sklearn.linear_model import LogisticRegression
+
+    classes, seed_lab = np.unique(data.y[data.seed], return_inverse=True)
+    n_cls = len(classes)
+    part = np.full(len(data.y), -1, np.int64)
+    part[data.seed] = seed_lab
+    val = data.val[np.isin(data.y[data.val], classes)]
+    y_val = np.searchsorted(classes, data.y[val])
+    rest = np.setdiff1d(np.arange(len(data.y)), data.seed)
+    for _ in range(rounds):
+        X = partner_profile(data.A, part, n_cls)
+        best = None
+        for C in (0.1, 1.0, 10.0):  # chosen on validation accuracy
+            clf = LogisticRegression(C=C, max_iter=500, tol=1e-3).fit(X[data.seed], seed_lab)
+            acc = (clf.predict(X[val]) == y_val).mean()
+            if best is None or acc > best[0]:
+                best = (acc, clf)
+        clf = best[1]
+        part[rest] = clf.predict(X[rest])
+    proba = clf.predict_proba(X[data.scored])
+    top = np.argsort(-proba, axis=1)[:, :k]
+    return classes[clf.classes_[top]], proba.max(axis=1)
+
+
+def profile_lr_iter(data, k=5):
+    return profile_lr(data, k, rounds=3)
+
+
+def profile_linear(data, k=5):
+    """profile_lr in PyTorch, for cell type (see torch_models)."""
+    from flyct.torch_models import profile_linear
+
+    return profile_linear(data, k)
+
+
+def profile_linear_iter(data, k=5):
+    from flyct.torch_models import profile_linear_iter
+
+    return profile_linear_iter(data, k)
+
+
+MODELS = {"majority": majority, "lightgbm": lightgbm, "ntac": ntac,
+          "profile_lr": profile_lr, "profile_lr_iter": profile_lr_iter,
+          "profile_linear": profile_linear, "profile_linear_iter": profile_linear_iter}
+GRAPH_MODELS = {"ntac", "profile_lr", "profile_lr_iter", "profile_linear", "profile_linear_iter"}

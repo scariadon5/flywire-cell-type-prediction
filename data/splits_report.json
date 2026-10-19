@@ -3,396 +3,462 @@
   "seed": 1392,
   "val": 13785,
   "test": 124064,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "0d11c7c9c9577532ecf2815fa3b53cd5"
  },
  "super_class/frac01_r1": {
   "seed": 1392,
   "val": 13785,
   "test": 124064,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "d70465f902deb5a943828bd1ad85678b"
  },
  "super_class/frac01_r2": {
   "seed": 1392,
   "val": 13785,
   "test": 124064,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "aa4183dbdc21c57f9b13a58dab5f6e29"
  },
  "super_class/frac01_r3": {
   "seed": 1392,
   "val": 13785,
   "test": 124064,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "dc205a6f16241cf42c2953a1f8bb36e5"
  },
  "super_class/frac01_r4": {
   "seed": 1392,
   "val": 13785,
   "test": 124064,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "a19aa6c8f167e3d5e45c8161c2c1a39f"
  },
  "super_class/frac05_r0": {
   "seed": 6962,
   "val": 13228,
   "test": 119051,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "7b1c761c16f1f9fbec2bbf403816bb0a"
  },
  "super_class/frac05_r1": {
   "seed": 6962,
   "val": 13228,
   "test": 119051,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "a9c073a38d18f3f7a2620f068762f5e3"
  },
  "super_class/frac05_r2": {
   "seed": 6962,
   "val": 13228,
   "test": 119051,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "433af784bc0cc8e7cdf6d00f31e96f43"
  },
  "super_class/frac05_r3": {
   "seed": 6962,
   "val": 13228,
   "test": 119051,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "b353274010dafc1810464a59e55e8e69"
  },
  "super_class/frac05_r4": {
   "seed": 6962,
   "val": 13228,
   "test": 119051,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "99e5bad7b31228721246779bef04f8a2"
  },
  "super_class/frac20_r0": {
   "seed": 27848,
   "val": 11139,
   "test": 100254,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "aca42c390442df9d0c374a16fd24930e"
  },
  "super_class/frac20_r1": {
   "seed": 27848,
   "val": 11139,
   "test": 100254,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "0e09b57f8bad754cebe789fd71bb1295"
  },
  "super_class/frac20_r2": {
   "seed": 27848,
   "val": 11139,
   "test": 100254,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "b74293126b01b4a87f68daad0d677445"
  },
  "super_class/frac20_r3": {
   "seed": 27848,
   "val": 11139,
   "test": 100254,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "8120d59e1030b0e38aa63423c0b1b030"
  },
  "super_class/frac20_r4": {
   "seed": 27848,
   "val": 11139,
   "test": 100254,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "956df54d6f27cde161905cd7954d667c"
  },
  "super_class/frac80_r0": {
   "seed": 111392,
   "val": 2785,
   "test": 25064,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "472989c81496d9e31894c29f70c47e76"
  },
  "super_class/frac80_r1": {
   "seed": 111392,
   "val": 2785,
   "test": 25064,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "741bb8bb6908f7b1ce6867aedc0638c1"
  },
  "super_class/frac80_r2": {
   "seed": 111392,
   "val": 2785,
   "test": 25064,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "f561dc14401bb40605ba22e2248b8f0c"
  },
  "super_class/frac80_r3": {
   "seed": 111392,
   "val": 2785,
   "test": 25064,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "c603c9d6f6f3b1bdab3e85a3920aeaa9"
  },
  "super_class/frac80_r4": {
   "seed": 111392,
   "val": 2785,
   "test": 25064,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "405d08c55db3d859c7fd05c50ac7ae6e"
  },
  "super_class/hemi_l2r": {
   "seed": 69952,
   "val": 6908,
   "test": 62177,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "c95fecc147d85f85c5427da38b11e906"
  },
  "super_class/hemi_r2l": {
   "seed": 69085,
   "val": 6995,
   "test": 62957,
-  "seed_classes": 10
+  "seed_classes": 10,
+  "md5": "f20181e6f31932e8e09cd990041e24db"
  },
  "cell_class/frac01_r0": {
   "seed": 1075,
   "val": 10644,
   "test": 95792,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "6548b828e7c759d2d0f498920fb520e5"
  },
  "cell_class/frac01_r1": {
   "seed": 1075,
   "val": 10644,
   "test": 95792,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "d46fc5052568f0403a1df69b504b0356"
  },
  "cell_class/frac01_r2": {
   "seed": 1075,
   "val": 10644,
   "test": 95792,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "53810683c5815ebf4cdbbdda7e3d1ce3"
  },
  "cell_class/frac01_r3": {
   "seed": 1075,
   "val": 10644,
   "test": 95792,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "cf984f53b93b6881784197d11654e35c"
  },
  "cell_class/frac01_r4": {
   "seed": 1075,
   "val": 10644,
   "test": 95792,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "1f5e2adc122630f692fe67a838ff1c13"
  },
  "cell_class/frac05_r0": {
   "seed": 5375,
   "val": 10214,
   "test": 91922,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "6d4834c9761489a4018bace487c62a86"
  },
  "cell_class/frac05_r1": {
   "seed": 5375,
   "val": 10214,
   "test": 91922,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "bd0c5066de38088d36d1f90525c1b0d1"
  },
  "cell_class/frac05_r2": {
   "seed": 5375,
   "val": 10214,
   "test": 91922,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "9f1f65094ae4662b4f2251f302bebd20"
  },
  "cell_class/frac05_r3": {
   "seed": 5375,
   "val": 10214,
   "test": 91922,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "bb615e3572d988073a91799095f02326"
  },
  "cell_class/frac05_r4": {
   "seed": 5375,
   "val": 10214,
   "test": 91922,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "4c2330c3de3fb4570b056baf65acc8fb"
  },
  "cell_class/frac20_r0": {
   "seed": 21502,
   "val": 8601,
   "test": 77408,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "dd8463366d20977b08d6e776f2f17d32"
  },
  "cell_class/frac20_r1": {
   "seed": 21502,
   "val": 8601,
   "test": 77408,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "9e4a1f20894275d1058687c28a33e235"
  },
  "cell_class/frac20_r2": {
   "seed": 21502,
   "val": 8601,
   "test": 77408,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "8914bad78affc4f8de7b3981b827bc00"
  },
  "cell_class/frac20_r3": {
   "seed": 21502,
   "val": 8601,
   "test": 77408,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "67be430388e95b89dc4e5206328813c0"
  },
  "cell_class/frac20_r4": {
   "seed": 21502,
   "val": 8601,
   "test": 77408,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "deb1dcfa418ced3a5226d54cad57060b"
  },
  "cell_class/frac80_r0": {
   "seed": 86008,
   "val": 2150,
   "test": 19353,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "61232e35827b8df1127b1800e2c31ea4"
  },
  "cell_class/frac80_r1": {
   "seed": 86008,
   "val": 2150,
   "test": 19353,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "b903b33b45e40ef2cbf8779d8d74e67b"
  },
  "cell_class/frac80_r2": {
   "seed": 86008,
   "val": 2150,
   "test": 19353,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "7fbe49789ed15ab253d8fbde37287ecf"
  },
  "cell_class/frac80_r3": {
   "seed": 86008,
   "val": 2150,
   "test": 19353,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "9bd3f74bf7271c113e653d7602e4fdc4"
  },
  "cell_class/frac80_r4": {
   "seed": 86008,
   "val": 2150,
   "test": 19353,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "a1d8c983c6d13ce3eabd7aaee8d1466f"
  },
  "cell_class/hemi_l2r": {
   "seed": 54151,
   "val": 5325,
   "test": 47927,
-  "seed_classes": 48
+  "seed_classes": 48,
+  "md5": "be2bb165eaf3d9f6b80beacd79c74b8c"
  },
  "cell_class/hemi_r2l": {
   "seed": 53252,
   "val": 5415,
   "test": 48736,
-  "seed_classes": 49
+  "seed_classes": 49,
+  "md5": "9ed87d8a357e73cc72fba75927d668f3"
  },
  "cell_type/frac01_r0": {
   "seed": 8840,
   "val": 12887,
   "test": 115987,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "f0b2f44f49d05d82a588749206dcf903"
  },
  "cell_type/frac01_r1": {
   "seed": 8840,
   "val": 12887,
   "test": 115987,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "18dcb1d560bd2f69f0d2731ca5f67a8a"
  },
  "cell_type/frac01_r2": {
   "seed": 8840,
   "val": 12887,
   "test": 115987,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "2c0c4eddc8c5b7d1134e9080c92a4111"
  },
  "cell_type/frac01_r3": {
   "seed": 8840,
   "val": 12887,
   "test": 115987,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "ae83b7c216020995ba6e638b7670062b"
  },
  "cell_type/frac01_r4": {
   "seed": 8840,
   "val": 12887,
   "test": 115987,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "807a3f006948ce795251c43e25ed42fa"
  },
  "cell_type/frac05_r0": {
   "seed": 8840,
   "val": 12887,
   "test": 115987,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "8cbfb21fdd5e56805f5a5fb05447250d"
  },
  "cell_type/frac05_r1": {
   "seed": 8840,
   "val": 12887,
   "test": 115987,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "835d114298aa96e475d5ba6980a4e540"
  },
  "cell_type/frac05_r2": {
   "seed": 8840,
   "val": 12887,
   "test": 115987,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "f33571e312340ff18900019583c89328"
  },
  "cell_type/frac05_r3": {
   "seed": 8840,
   "val": 12887,
   "test": 115987,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "365d91ef99459d573c749761082b0dbd"
  },
  "cell_type/frac05_r4": {
   "seed": 8840,
   "val": 12887,
   "test": 115987,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "f05510422170946363535c68471b80b7"
  },
  "cell_type/frac20_r0": {
   "seed": 27542,
   "val": 11017,
   "test": 99155,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "4b5e8e543899b58ae1cefafa765ebc7f"
  },
  "cell_type/frac20_r1": {
   "seed": 27542,
   "val": 11017,
   "test": 99155,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "5cd80737b97ce123f1dd21264f48950a"
  },
  "cell_type/frac20_r2": {
   "seed": 27542,
   "val": 11017,
   "test": 99155,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "115f8fa28288f2909a5b82b6bdb1deef"
  },
  "cell_type/frac20_r3": {
   "seed": 27542,
   "val": 11017,
   "test": 99155,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "b4116dee6367e5d8e7331302d260e5e1"
  },
  "cell_type/frac20_r4": {
   "seed": 27542,
   "val": 11017,
   "test": 99155,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "0dda4c69a11195689ff02cf2b5b9d0d0"
  },
  "cell_type/frac80_r0": {
   "seed": 110171,
   "val": 2754,
   "test": 24789,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "23c0f6e09381fd1bef5177207d9752f4"
  },
  "cell_type/frac80_r1": {
   "seed": 110171,
   "val": 2754,
   "test": 24789,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "7c6a521e6e4a8cf96f67c2cbdb0cfd02"
  },
  "cell_type/frac80_r2": {
   "seed": 110171,
   "val": 2754,
   "test": 24789,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "5457e98910816fd1c0fe382ab6100d85"
  },
  "cell_type/frac80_r3": {
   "seed": 110171,
   "val": 2754,
   "test": 24789,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "989d8e22c59bb0cab19e74ea8beae3cb"
  },
  "cell_type/frac80_r4": {
   "seed": 110171,
   "val": 2754,
   "test": 24789,
-  "seed_classes": 8840
+  "seed_classes": 8840,
+  "md5": "c25ae92fd46e6dd90ba1ed6e422deb3e"
  },
  "cell_type/hemi_l2r": {
   "seed": 69011,
   "val": 6858,
   "test": 61726,
-  "seed_classes": 8713
+  "seed_classes": 8713,
+  "md5": "d1ce26831e81ba72daee842a5ad98eb5"
  },
  "cell_type/hemi_r2l": {
   "seed": 68584,
   "val": 6901,
   "test": 62110,
-  "seed_classes": 8729
+  "seed_classes": 8729,
+  "md5": "0cb4924242f99efea0d24084f9c7aadc"
  }
 }

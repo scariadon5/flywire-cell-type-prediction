@@ -5,7 +5,7 @@ else
 	PY ?= .venv/bin/python
 endif
 
-.PHONY: setup data download convert build check explore clean-data splits baselines
+.PHONY: setup data download convert build check explore clean-data splits baselines graph-models report
 
 setup:
 	$(PY) -m pip install -r requirements.txt
@@ -39,3 +39,13 @@ splits:
 
 baselines:
 	$(PY) -m flyct.run --method majority lightgbm --task super_class cell_class --split all
+
+# Connectivity models. NTAC runs every task on a laptop; partner-profile LR does super class and class here
+# (cell type needs the Kaggle notebook).
+graph-models:
+	$(PY) -m flyct.run --method ntac --task cell_type --split all
+	$(PY) -m flyct.run --method profile_lr profile_lr_iter --task super_class cell_class --split all
+
+# results/runs.jsonl -> results/results.md
+report:
+	$(PY) -m flyct.report
