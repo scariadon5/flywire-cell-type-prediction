@@ -5,7 +5,7 @@ else
 	PY ?= .venv/bin/python
 endif
 
-.PHONY: setup data download convert build check explore clean-data
+.PHONY: setup data download convert build check explore clean-data splits baselines
 
 setup:
 	$(PY) -m pip install -r requirements.txt
@@ -32,3 +32,10 @@ explore:
 # Keeps the raw downloads; removes everything derived from them.
 clean-data:
 	rm -rf data/interim data/processed
+
+# Week 2: saved seed/val/test splits, then the feature baselines (super class and class run on a laptop).
+splits:
+	$(PY) -m flyct.splits
+
+baselines:
+	$(PY) -m flyct.run --method majority lightgbm --task super_class cell_class --split all

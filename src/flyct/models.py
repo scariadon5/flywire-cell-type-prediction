@@ -1,0 +1,45 @@
+"""Baseline models. Each takes the labels of seed neurons only and returns, for every neuron to score,
+its top-k predicted labels (best first) and the probability of the top one (None if the model has no
+probabilities).
+
+The signature is the same for all models: `fit_predict(data, k) -> (topk, conf)`, where `data` is a
+`flyct.run.TaskData` and the returned arrays cover `data.scored` (validation + test neurons) in order.
+"""
+
+import lightgbm as lgb
+import numpy as np
+
+
+def majority(data, k=5):
+    """Floor: always predict the most common seed classes."""
+    classes, counts = np.unique(data.y[data.seed], return_counts=True)
+    order = np.argsort(-counts, kind="stable")[:k]
+    n = len(data.scored)
+    topk = np.tile(classes[order], (n, 1))
+    conf = np.full(n, counts[order[0]] / counts.sum())
+    return topk, conf
+
+
+def lightgbm(data, k=5):
+    """Gradient-boosted trees on per-neuron features. Super class and class only: a multiclass model
+    grows one tree per class per round, so 8,840 cell types are impractical."""
+    classes, y_seed = np.unique(data.y[data.seed], return_inverse=True)
+    X = data.X
+    # Validation neurons whose class has no seed (possible in the hemisphere split) can't be scored
+    # by any model, so they are left out of early stopping.
+    val = data.val[np.isin(data.y[data.val], classes)]
+    y_val = np.searchsorted(classes, data.y[val])
+    params = {
+        "objective": "multiclass", "num_class": len(classes), "learning_rate": 0.1, "num_leaves": 31,
+        "min_data_in_leaf": 10, "feature_fraction": 0.8, "num_threads": 4, "verbose": -1, "seed": 0,
+    }
+    train = lgb.Dataset(X[data.seed], y_seed, free_raw_data=True)
+    valid = lgb.Dataset(X[val], y_val, reference=train)
+    booster = lgb.train(params, train, num_boost_round=500, valid_sets=[valid],
+                        callbacks=[lgb.early_stopping(30, verbose=False)])
+    proba = booster.predict(X[data.scored], num_iteration=booster.best_iteration)
+    top = np.argsort(-proba, axis=1)[:, :k]
+    return classes[top], proba.max(axis=1)
+
+
+MODELS = {"majority": majority, "lightgbm": lightgbm}
