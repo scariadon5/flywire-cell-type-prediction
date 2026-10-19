@@ -108,18 +108,20 @@ By the end of the week you have reproduced one NTAC result and filled the first 
 
 **Must-have**
 
-- [ ] Split code for all three evaluation settings, with saved seed lists so every model sees identical splits.
-- [ ] MLflow tracking for every run: method, split, seed fraction, region, metrics, git commit.
-- [ ] Majority and LightGBM-on-features baselines (LightGBM for super class and class only).
+- [x] Split code for all three evaluation settings, with saved seed lists so every model sees identical splits.
+- [x] MLflow tracking for every run: method, split, seed fraction, region, metrics, git commit.
+- [x] Majority and LightGBM-on-features baselines (LightGBM for super class and class only).
 - [ ] Kaggle notebook set up to run the same code on the full data; all cell-type runs go there from now on.
-- [ ] Your own seeded NTAC: build each neuron's synapse counts to and from every seed type, assign the nearest seed by Jaccard distance, repeat. Keep the count matrix sparse (SciPy) or it won't fit in memory.
-- [ ] Reproduce one NTAC setting first, such as the visual system at a low seed fraction, and land within a few points of their reported figure. If you can't, find out why before going further.
-- [ ] Partner-type profile + logistic regression.
-- [ ] ADR-001: split design and leakage rules.
+  - **Oct 19:** notebook written (`kaggle/`); not yet run on Kaggle. NTAC turned out to fit the laptop for cell type (about 30–190 s per run), so only the partner-profile cell-type runs need it.
+- [x] Your own seeded NTAC: build each neuron's synapse counts to and from every seed type, assign the nearest seed by Jaccard distance, repeat. Keep the count matrix sparse (SciPy) or it won't fit in memory.
+- [x] Reproduce one NTAC setting first, such as the visual system at a low seed fraction, and land within a few points of their reported figure. If you can't, find out why before going further.
+- [x] Partner-type profile + logistic regression (super class and class; cell-type version ready for Kaggle).
+- [x] ADR-001: split design and leakage rules.
 
 **Stretch**
 
-- [ ] Run their package on the same splits and confirm your implementation matches it.
+- [x] Run their package on the same splits and confirm your implementation matches it.
+  - **Result (Oct 19):** identical predictions on 100% of test neurons when the reference runs single-threaded. Multi-threaded, the reference kernel races (`inter[i, j] +=` inside `prange` over dimensions) and changes about 10% of predictions from run to run. Reproduction against the paper: optic-lobe intrinsic, 2% seeds, 96.0% (paper: over 95%); central brain, 80% seeds, 88.2% (paper: 87%).
 
 **Done when:** the results table has every baseline for super class and class, plus cell type in at least one region.
 

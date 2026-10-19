@@ -28,12 +28,11 @@ def embed(A: sp.csr_matrix, AT: sp.csr_matrix, part: np.ndarray, k: int) -> sp.c
 
 
 @njit(parallel=True, cache=True)
-def _nearest(r_ptr, r_idx, r_val, r_sum, s_ptr, s_idx, s_val, s_sum, s_lab, n_lab, topk, fallback):
+def _nearest(r_ptr, r_idx, r_val, r_sum, s_ptr, s_idx, s_val, s_sum, s_lab, n_lab, topk, fallback, blocks):
     n = len(r_ptr) - 1
     m = len(s_sum)
     out_lab = np.full((n, topk), -1, np.int64)
     out_sim = np.zeros((n, topk), np.float32)
-    blocks = min(n, 8 * get_num_threads())
     for blk in prange(blocks):
         inter = np.zeros(m, np.float32)   # sum_d min(a_d, b_d) per touched seed
         touched = np.empty(m, np.int64)
@@ -97,7 +96,7 @@ def nearest_seeds(E: sp.csr_matrix, rows: np.ndarray, seeds: np.ndarray, seed_la
     S = E[seeds].tocsc()  # per dimension: which seeds have it, and their value
     return _nearest(R.indptr, R.indices, R.data, np.asarray(R.sum(axis=1)).ravel().astype(np.float32),
                     S.indptr, S.indices, S.data, np.asarray(S.sum(axis=1)).ravel().astype(np.float32),
-                    seed_lab, n_lab, topk, fallback)
+                    seed_lab, n_lab, topk, fallback, max(1, min(len(rows), 8 * get_num_threads())))
 
 
 def seeded_ntac(A: sp.csr_matrix, seeds: np.ndarray, seed_lab: np.ndarray, n_lab: int,

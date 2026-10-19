@@ -5,7 +5,7 @@ else
 	PY ?= .venv/bin/python
 endif
 
-.PHONY: setup data download convert build check explore clean-data splits baselines graph-models report
+.PHONY: setup data download convert build check explore clean-data splits baselines graph-models report test
 
 setup:
 	$(PY) -m pip install -r requirements.txt
@@ -49,3 +49,6 @@ graph-models:
 # results/runs.jsonl -> results/results.md
 report:
 	$(PY) -m flyct.report
+
+test:
+	$(PY) -m pytest -q tests

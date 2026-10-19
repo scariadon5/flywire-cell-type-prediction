@@ -6,8 +6,70 @@ Given a fraction of labelled neurons, predict the type of every other neuron fro
 Compare feature models, a graph neural network and the published NTAC method, and ask whether
 non-connectivity features (where synapses sit, predicted neurotransmitters) help where accuracy is lowest.
 
-> **Status: Week 1 done (data pipeline and exploration). Next: splits and baselines.** Results table and
-> explorer come in later weeks; see [docs/project-plan.md](docs/project-plan.md).
+> **Status: Week 2 done (splits, baselines, NTAC reproduction). Next: cell-type runs on Kaggle, then a
+> graph neural network (Week 3).** See [docs/project-plan.md](docs/project-plan.md).
+
+## Results so far
+
+Test accuracy (%), mean ± sd over 5 random splits. Full tables, macro F1 and top-5: [results/results.md](results/results.md).
+Split design and leakage rules: [ADR-001](docs/adr/001-splits-and-leakage.md).
+
+**Cell type (8,840 types), seeded NTAC on the whole-brain graph**
+
+| Seeds | 1% | 5% | 20% | 80% | Left → right | Right → left |
+| --- | --- | --- | --- | --- | --- | --- |
+| Accuracy | 58.9 ± 4.7 | 61.1 ± 6.3 | 92.1 ± 0.1 | 94.2 ± 0.1 | 76.3 | 86.3 |
+| Top-5 accuracy | 75.0 ± 3.4 | 76.9 ± 5.1 | 97.2 ± 0.0 | 98.1 ± 0.1 | 89.8 | 93.3 |
+
+At 20% seeds: optic lobe 96.3%, central brain 84.7%. At 1% and 5% every type gets exactly one seed
+(8,840 seeds, 6.4% of neurons), so a type of 8,452 photoreceptors is matched against a single example.
+
+**Super class (10) and class (49), LightGBM on per-neuron features**
+
+| Task | 1% | 5% | 20% | 80% | Left → right | Right → left |
+| --- | --- | --- | --- | --- | --- | --- |
+| Super class | 95.6 ± 0.1 | 96.3 ± 0.8 | 97.1 ± 0.3 | 97.5 ± 0.1 | 96.8 | 96.9 |
+| Class | 86.0 ± 6.8 | 87.0 ± 0.4 | 90.7 ± 0.6 | 92.6 ± 0.2 | 91.4 | 86.4 |
+
+Majority-class floors: 55.7% (super class), 20.8% (class), 6.5% (cell type at 20% seeds).
+
+### NTAC reproduction
+
+`src/flyct/ntac.py` is our own implementation. On NTAC's published FlyWire subsets it makes the
+**same prediction as the reference package for 100% of test neurons** (reference run single-threaded),
+and matches the paper's stated numbers within about a point ([script](scripts/ntac_reproduction.py),
+[results](results/ntac_reproduction.json)):
+
+| Subset (NTAC's data) | Seeds | Ours, 5 runs | Paper |
+| --- | --- | --- | --- |
+| Optic lobe, intrinsic neurons | 2% | 96.0 ± 0.4 | over 95% |
+| Whole visual system | 5% | 96.5 ± 0.1 | |
+| Central brain | 80% | 88.2 ± 0.2 | 87% |
+
+Two things came out of the comparison:
+
+- **The reference kernel has a race condition.** It adds into a shared similarity matrix inside a parallel
+  loop over dimensions, so multi-threaded runs lose updates and change about 10% of predictions from run
+  to run (accuracy moves by about 0.3 points). Single-threaded, our results match it exactly.
+- **Memory.** The reference builds a dense neurons × seeds similarity matrix: about 15 GB for the whole
+  brain at 20% seeds. Ours walks only the seeds sharing a nonzero dimension with each neuron and keeps
+  the best per class, so a whole-brain cell-type run takes 30 s to 3 min on a 5.9 GB laptop, and is
+  about 7× faster than the reference on its own data.
+
+### Week 2 findings
+
+- **Coarse labels are about *where*, fine labels about *whom*.** Per-neuron features (synapses per
+  neuropil, neurotransmitter mix) give 95.6% on super class with 1% seeds; partner-type profiles alone
+  give far less there. For cell type, partner types are what work (see Week 1: same-type neurons share
+  partner types).
+- **A trained classifier on partner profiles breaks under hemisphere transfer.** Partner-profile LR gets
+  91.4% on super class with 80% random seeds but 49.8% left → right, below the 55.7% majority floor.
+  Seeds have full profiles (their same-side partners are labelled); the other side sees only its few
+  cross-midline partners, so its profiles are nearly empty. Refilling partners with predictions (3
+  rounds) recovers 81%; NTAC, which iterates from the start, does not have this problem.
+- **Hemisphere transfer is asymmetric in the optic lobe.** NTAC types the right optic lobe from left
+  seeds at 69.6%, the left from right seeds at 89.5%; the central brain is symmetric (about 89% both
+  ways). Open question for the error analysis.
 
 ## Quickstart
 
@@ -16,6 +78,11 @@ py -3.12 -m venv .venv          # Linux/Kaggle: python3 -m venv .venv
 gmake setup                     # Windows: gmake from Strawberry Perl, in Git Bash. Linux: make
 gmake data                      # download + verify -> Parquet -> clean graph -> sanity checks
 gmake explore                   # execute notebooks/01_exploration.ipynb
+gmake splits                    # saved seed/val/test splits, checked against data/splits_report.json
+gmake baselines                 # majority + LightGBM, super class and class
+gmake graph-models              # NTAC (cell type) + partner-profile LR (super class, class)
+gmake report                    # results/runs.jsonl -> results/results.md
+gmake test
 ```
 
 `make data` is idempotent. Verified downloads are skipped, and an interrupted download resumes.
@@ -102,8 +169,20 @@ src/flyct/download.py     parallel, resumable, checksum-verified download
 src/flyct/convert.py      Feather -> Parquet, one record batch at a time
 src/flyct/build.py        DuckDB: edges, features, labels
 src/flyct/checks.py       sanity checks + reproducibility check
+src/flyct/splits.py       seed-fraction sweep and hemisphere-transfer splits, saved once
+src/flyct/features.py     feature matrix, neuropils mirrored to ipsi/contra
+src/flyct/graph.py        thresholded adjacency as a sparse matrix
+src/flyct/ntac.py         seeded NTAC, numba, memory-light
+src/flyct/models.py       majority, LightGBM, NTAC, partner-profile logistic regression
+src/flyct/torch_models.py partner-profile LR for 8,840 classes (sparse gradients)
+src/flyct/metrics.py      accuracy, top-5, weighted/macro F1, ECE, by region and type size
+src/flyct/run.py          run models on splits; log to MLflow and results/runs.jsonl
+src/flyct/report.py       results tables
+scripts/                  NTAC reproduction against the reference package and paper
+kaggle/                   notebook for cell-type runs that need more than a laptop
+tests/                    NTAC against a brute-force implementation
 notebooks/                exploration (01_exploration.ipynb is generated by make_01_exploration.py)
-docs/                     project plan, figures
+docs/                     project plan, ADRs, figures
 ```
 
 ## Citations
