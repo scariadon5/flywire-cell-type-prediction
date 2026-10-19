@@ -1,0 +1,10 @@
+pyarrow>=17
+duckdb>=1.1
+pandas>=2.2
+numpy>=1.26
+matplotlib>=3.8
+tqdm>=4.66
+jupyter
+nbconvert
+ipykernel
+scipy>=1.13

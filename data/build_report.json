@@ -1,0 +1,15 @@
+{
+  "counts": {
+    "neurons": 139255,
+    "edges": 2700513,
+    "synapses_in_edges": 34153566,
+    "feature_columns": 177,
+    "with_super_class": 139241,
+    "with_cell_class": 107511,
+    "with_cell_type": 137714,
+    "distinct_cell_types": 8840
+  },
+  "annotations_tag": "v3.1.0",
+  "zenodo_record": "10676866",
+  "synapse_threshold": 5
+}

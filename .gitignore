@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Data is rebuilt by `make data`; only the checksums and the build report are committed.
+data/*
+!data/checksums.md5
+!data/build_report.json
+
+mlruns/
+mlflow.db
