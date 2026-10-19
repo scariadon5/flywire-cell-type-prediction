@@ -17,8 +17,8 @@ from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
 
-from flyct import config, features, metrics, splits
-from flyct.models import MODELS
+from flyct import config, features, graph, metrics, splits
+from flyct.models import GRAPH_MODELS, MODELS
 
 RESULTS = config.ROOT / "results" / "runs.jsonl"
 
@@ -31,6 +31,7 @@ class TaskData:
     roles: np.ndarray    # (n,) NONE / SEED / VAL / TEST
     X: np.ndarray        # (n, f) features
     feature_names: list
+    A: object = None     # (n, n) sparse adjacency, loaded only for graph models
 
     @property
     def seed(self):
@@ -82,7 +83,7 @@ def score(data: TaskData, idx, topk, conf, region, class_size) -> dict:
     return metrics.evaluate(data.y[idx], topk, conf, region=region[idx], class_size=class_size[idx])
 
 
-def run_one(method, data, split, region, class_size, tracker):
+def run_one(method, data, split, region, class_size, log):
     t0 = time.perf_counter()
     topk, conf = MODELS[method](data)
     seconds = time.perf_counter() - t0
@@ -97,23 +98,26 @@ def run_one(method, data, split, region, class_size, tracker):
         **{f"val_{k}": v for k, v in m_val.items() if k in ("acc", "top5_acc", "f1_macro")},
         **{f"test_{k}": v for k, v in m_test.items()},
     }
-    RESULTS.parent.mkdir(exist_ok=True)
-    with open(RESULTS, "a") as f:
-        f.write(json.dumps(record) + "\n")
-    tracker(record)
+    log(record)
     print(f"{method:>9} {data.task:>11} {split:>10}  test acc {m_test['acc']:.3f}"
           f"  macro F1 {m_test['f1_macro']:.3f}  ({seconds:.1f}s)")
 
 
-def mlflow_tracker():
+def tracker():
+    """Append each run to results/runs.jsonl (committed) and, when installed, to MLflow."""
     try:
         import mlflow
+        mlflow.set_tracking_uri(f"sqlite:///{(config.ROOT / 'mlflow.db').as_posix()}")
+        mlflow.set_experiment("flyct")
     except ImportError:
-        return lambda record: None
-    mlflow.set_tracking_uri(f"sqlite:///{(config.ROOT / 'mlflow.db').as_posix()}")
-    mlflow.set_experiment("flyct")
+        mlflow = None
 
     def log(record):
+        RESULTS.parent.mkdir(exist_ok=True)
+        with open(RESULTS, "a") as f:
+            f.write(json.dumps(record) + "\n")
+        if mlflow is None:
+            return
         params = {k: v for k, v in record.items() if not isinstance(v, float) or k == "fraction"}
         with mlflow.start_run(run_name=f"{record['method']}/{record['task']}/{record['split']}"):
             mlflow.log_params(params)
@@ -126,7 +130,7 @@ def main() -> int:
     ap.add_argument("--method", nargs="+", required=True, choices=list(MODELS))
     ap.add_argument("--task", nargs="+", required=True, choices=splits.TASKS)
     ap.add_argument("--split", nargs="+", default=["all"])
-    ap.add_argument("--no-mlflow", action="store_true")
+    ap.add_argument("--no-log", action="store_true", help="print results only; skip MLflow and runs.jsonl")
     args = ap.parse_args()
 
     labels = pd.read_parquet(config.PROCESSED / "labels.parquet")
@@ -134,7 +138,8 @@ def main() -> int:
     assert (feats.index.to_numpy() == labels.root_id.to_numpy()).all(), "features and labels out of order"
     X = feats.to_numpy()
     region = labels.super_class.fillna("none").to_numpy(dtype=object)
-    tracker = (lambda record: None) if args.no_mlflow else mlflow_tracker()
+    log = (lambda record: None) if args.no_log else tracker()
+    A = graph.adjacency(labels.root_id.to_numpy()) if GRAPH_MODELS & set(args.method) else None
 
     for task in args.task:
         y = labels[task].to_numpy(dtype=object)
@@ -142,9 +147,9 @@ def main() -> int:
         roles_all = pd.read_parquet(config.DATA / "splits" / f"{task}.parquet")
         assert (roles_all.root_id.to_numpy() == labels.root_id.to_numpy()).all()
         for split in expand_splits(args.split):
-            data = TaskData(task, labels.root_id.to_numpy(), y, roles_all[split].to_numpy(), X, list(feats.columns))
+            data = TaskData(task, labels.root_id.to_numpy(), y, roles_all[split].to_numpy(), X, list(feats.columns), A)
             for method in args.method:
-                run_one(method, data, split, region, class_size, tracker)
+                run_one(method, data, split, region, class_size, log)
     return 0
 
 

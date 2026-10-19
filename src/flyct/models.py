@@ -42,4 +42,17 @@ def lightgbm(data, k=5):
     return classes[top], proba.max(axis=1)
 
 
-MODELS = {"majority": majority, "lightgbm": lightgbm}
+def ntac(data, k=5):
+    """Seeded NTAC on the whole-brain graph (connectivity only, no features). Its score is a
+    similarity, not a probability, so it reports no confidence."""
+    from flyct.ntac import seeded_ntac
+
+    classes, seed_lab = np.unique(data.y[data.seed], return_inverse=True)
+    rows, lab, _ = seeded_ntac(data.A, data.seed, seed_lab, len(classes), iters=15, lr=1.0, topk=k)
+    lab = lab[np.searchsorted(rows, data.scored)]
+    topk = np.where(lab >= 0, classes[np.maximum(lab, 0)], None)
+    return topk, None
+
+
+MODELS = {"majority": majority, "lightgbm": lightgbm, "ntac": ntac}
+GRAPH_MODELS = {"ntac"}
