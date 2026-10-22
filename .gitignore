@@ -11,3 +11,7 @@ data/*
 
 mlruns/
 mlflow.db
+
+# Private planning notes (resume bullets, interview talking points); kept locally only.
+docs/project-plan.md
+docs/project-plan.pdf

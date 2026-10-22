@@ -7,7 +7,7 @@ Compare feature models, a graph neural network and the published NTAC method, an
 non-connectivity features (where synapses sit, predicted neurotransmitters) help where accuracy is lowest.
 
 > **Status: Week 2 done (splits, baselines, NTAC reproduction). Next: cell-type runs on Kaggle, then a
-> graph neural network (Week 3).** See [docs/project-plan.md](docs/project-plan.md).
+> graph neural network (Week 3).**
 
 ## Results so far
 
