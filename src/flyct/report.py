@@ -14,7 +14,7 @@ from flyct.run import RESULTS
 
 SETTINGS = [("sweep", 0.01, "1%"), ("sweep", 0.05, "5%"), ("sweep", 0.20, "20%"), ("sweep", 0.80, "80%"),
             ("hemi_l2r", None, "L→R"), ("hemi_r2l", None, "R→L")]
-METHODS = ["majority", "lightgbm", "profile_lr", "profile_lr_iter", "ntac"]
+METHODS = ["majority", "lightgbm", "profile_lr", "profile_lr_iter", "profile_linear", "profile_linear_iter", "ntac"]
 TASK_NAMES = {"super_class": "Super class (10)", "cell_class": "Class (49)", "cell_type": "Cell type (8,840)"}
 
 
