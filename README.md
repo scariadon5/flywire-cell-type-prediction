@@ -6,20 +6,24 @@ Given a fraction of labelled neurons, predict the type of every other neuron fro
 Compare feature models, a graph neural network and the published NTAC method, and ask whether
 non-connectivity features (where synapses sit, predicted neurotransmitters) help where accuracy is lowest.
 
-> **Status: Week 2 done (splits, baselines, NTAC reproduction). Next: cell-type runs on Kaggle, then a
-> graph neural network (Week 3).**
+> **Status: Week 2 done (splits, baselines, NTAC reproduction, cell-type runs on Kaggle). Next: a graph
+> neural network (Week 3).**
 
 ## Results so far
 
 Test accuracy (%), mean ± sd over 5 random splits. Full tables, macro F1 and top-5: [results/results.md](results/results.md).
 Split design and leakage rules: [ADR-001](docs/adr/001-splits-and-leakage.md).
 
-**Cell type (8,840 types), seeded NTAC on the whole-brain graph**
+**Cell type (8,840 types) on the whole-brain graph**
 
 | Seeds | 1% | 5% | 20% | 80% | Left → right | Right → left |
 | --- | --- | --- | --- | --- | --- | --- |
-| Accuracy | 58.9 ± 4.7 | 61.1 ± 6.3 | 92.1 ± 0.1 | 94.2 ± 0.1 | 76.3 | 86.3 |
-| Top-5 accuracy | 75.0 ± 3.4 | 76.9 ± 5.1 | 97.2 ± 0.0 | 98.1 ± 0.1 | 89.8 | 93.3 |
+| NTAC, accuracy | 58.9 ± 4.7 | 61.1 ± 6.3 | 92.1 ± 0.1 | 94.2 ± 0.1 | 76.3 | 86.3 |
+| NTAC, top-5 accuracy | 75.0 ± 3.4 | 76.9 ± 5.1 | 97.2 ± 0.0 | 98.1 ± 0.1 | 89.8 | 93.3 |
+| Partner-profile linear, iterated | 17.1 ± 0.4 | 14.7 ± 4.0 | 90.9 ± 0.1 | 94.2 ± 0.3 | 30.1 | 28.3 |
+
+The partner-profile model is a linear layer on NTAC's features, with partners refilled from its own
+predictions for 3 rounds; it was trained on Kaggle ([notebook](kaggle/flyct_celltype.ipynb)).
 
 At 20% seeds: optic lobe 96.3%, central brain 84.7%. At 1% and 5% every type gets exactly one seed
 (8,840 seeds, 6.4% of neurons), so a type of 8,452 photoreceptors is matched against a single example.
@@ -67,6 +71,13 @@ Two things came out of the comparison:
   Seeds have full profiles (their same-side partners are labelled); the other side sees only its few
   cross-midline partners, so its profiles are nearly empty. Refilling partners with predictions (3
   rounds) recovers 81%; NTAC, which iterates from the start, does not have this problem.
+- **On cell type, a trained classifier only catches up with NTAC when labels are plentiful.** The iterated
+  partner-profile model ties NTAC at 80% seeds (94.2%) and comes close at 20% (90.9% vs 92.1%), where it is
+  slightly better on the optic lobe (97.0% vs 96.3%) but 7 points worse on the central brain (77.5% vs 84.7%)
+  and 10 points worse on types with 2 neurons. With one seed per type (1%, 5%) it gets 15–17% against NTAC's
+  59–61%: a classifier cannot learn 8,840 classes from one example each, while nearest-seed matching needs
+  only one. Under hemisphere transfer it reaches about 30% (NTAC 76–86%), the same empty-profile problem as
+  for super class.
 - **Hemisphere transfer is asymmetric in the optic lobe.** NTAC types the right optic lobe from left
   seeds at 69.6%, the left from right seeds at 89.5%; the central brain is symmetric (about 89% both
   ways). Open question for the error analysis.

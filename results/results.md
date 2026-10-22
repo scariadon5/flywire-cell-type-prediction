@@ -49,6 +49,8 @@ Test accuracy (%), mean ± sd over 5 random splits; hemisphere transfer is one s
 | Method | 1% | 5% | 20% | 80% | L→R | R→L |
 | --- | --- | --- | --- | --- | --- | --- |
 | majority | 0.0 ± 0.0 | 0.0 ± 0.0 | 6.6 ± 0.1 | 6.5 ± 0.1 | 5.8 | 6.4 |
+| profile_linear | 8.8 ± 0.8 | 9.0 ± 1.7 | 73.8 ± 0.3 | 93.2 ± 0.2 | 15.7 | 15.4 |
+| profile_linear_iter | 17.1 ± 0.4 | 14.7 ± 4.0 | 90.9 ± 0.1 | 94.2 ± 0.3 | 30.1 | 28.3 |
 | ntac | 58.9 ± 4.7 | 61.1 ± 6.3 | 92.1 ± 0.1 | 94.2 ± 0.1 | 76.3 | 86.3 |
 
 **Macro F1** (every class counts equally)
@@ -56,6 +58,8 @@ Test accuracy (%), mean ± sd over 5 random splits; hemisphere transfer is one s
 | Method | 1% | 5% | 20% | 80% | L→R | R→L |
 | --- | --- | --- | --- | --- | --- | --- |
 | majority | 0.0 ± 0.0 | 0.0 ± 0.0 | 0.0 ± 0.0 | 0.0 ± 0.0 | 0.0 | 0.0 |
+| profile_linear | 20.8 ± 0.2 | 21.2 ± 1.7 | 45.3 ± 0.7 | 74.8 ± 1.0 | 23.1 | 19.6 |
+| profile_linear_iter | 37.3 ± 1.9 | 35.9 ± 4.4 | 71.1 ± 0.5 | 77.1 ± 1.3 | 60.4 | 57.7 |
 | ntac | 72.8 ± 0.4 | 73.1 ± 0.4 | 82.3 ± 0.2 | 83.0 ± 0.5 | 86.1 | 87.3 |
 
 **Top-5 accuracy**
@@ -63,6 +67,8 @@ Test accuracy (%), mean ± sd over 5 random splits; hemisphere transfer is one s
 | Method | 1% | 5% | 20% | 80% | L→R | R→L |
 | --- | --- | --- | --- | --- | --- | --- |
 | majority | 0.0 ± 0.0 | 0.0 ± 0.0 | 12.2 ± 0.1 | 12.1 ± 0.2 | 11.2 | 11.8 |
+| profile_linear | 17.0 ± 1.0 | 17.1 ± 2.3 | 87.3 ± 0.2 | 98.4 ± 0.1 | 22.8 | 23.4 |
+| profile_linear_iter | 29.6 ± 0.7 | 26.5 ± 5.6 | 96.9 ± 0.1 | 98.7 ± 0.1 | 38.4 | 36.0 |
 | ntac | 75.0 ± 3.4 | 76.9 ± 5.1 | 97.2 ± 0.0 | 98.1 ± 0.1 | 89.8 | 93.3 |
 
 ## Cell type at 20% seeds, by region and type size (accuracy %)
@@ -70,4 +76,6 @@ Test accuracy (%), mean ± sd over 5 random splits; hemisphere transfer is one s
 | Method | Optic | Central | Visual proj. | Sensory | Type size 2 | 3–10 | 11–100 | >100 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | majority | 0.0 ± 0.0 | 0.0 ± 0.0 | 0.0 ± 0.0 | 51.4 ± 0.4 | 0.0 ± 0.0 | 0.0 ± 0.0 | 0.0 ± 0.0 | 8.9 ± 0.1 |
+| profile_linear | 78.7 ± 0.3 | 58.4 ± 0.8 | 85.3 ± 0.8 | 73.8 ± 0.7 | 51.0 ± 0.8 | 45.6 ± 0.7 | 66.5 ± 0.8 | 80.1 ± 0.3 |
+| profile_linear_iter | 97.0 ± 0.1 | 77.5 ± 0.2 | 95.7 ± 0.4 | 84.4 ± 0.3 | 82.4 ± 0.5 | 67.5 ± 0.3 | 83.1 ± 0.4 | 95.9 ± 0.1 |
 | ntac | 96.3 ± 0.1 | 84.7 ± 0.3 | 95.7 ± 0.2 | 85.2 ± 0.3 | 92.4 ± 0.2 | 79.5 ± 0.3 | 85.3 ± 0.2 | 94.9 ± 0.0 |
