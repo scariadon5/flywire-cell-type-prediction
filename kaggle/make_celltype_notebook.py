@@ -33,6 +33,7 @@ try:
 except Exception:
     token = None  # public repo
 url = f"https://{token}@github.com/{REPO}.git" if token else f"https://github.com/{REPO}.git"
+%cd /kaggle/working
 !rm -rf /kaggle/working/flyct && git clone -q --depth 1 -b {BRANCH} {url} /kaggle/working/flyct
 %cd /kaggle/working/flyct
 !git log -1 --format='commit %h  %s'"""),
