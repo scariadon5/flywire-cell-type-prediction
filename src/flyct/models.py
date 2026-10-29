@@ -111,7 +111,30 @@ def profile_linear_iter(data, k=5):
     return profile_linear_iter(data, k)
 
 
+def sage(data, k=5):
+    """GraphSAGE with seed labels as input and every node feature (see gnn)."""
+    from flyct.gnn import sage
+
+    return sage(data, k)
+
+
+def sage_conn(data, k=5):
+    """Ablation: connectivity only (degree counts, no neuropil or neurotransmitter features)."""
+    from flyct.gnn import sage
+
+    return sage(data, k, use=("degree",))
+
+
+def sage_region(data, k=5):
+    """Ablation: connectivity plus neuropil (brain-region) features, no neurotransmitter features."""
+    from flyct.gnn import sage
+
+    return sage(data, k, use=("degree", "region"))
+
+
 MODELS = {"majority": majority, "lightgbm": lightgbm, "ntac": ntac,
           "profile_lr": profile_lr, "profile_lr_iter": profile_lr_iter,
-          "profile_linear": profile_linear, "profile_linear_iter": profile_linear_iter}
-GRAPH_MODELS = {"ntac", "profile_lr", "profile_lr_iter", "profile_linear", "profile_linear_iter"}
+          "profile_linear": profile_linear, "profile_linear_iter": profile_linear_iter,
+          "sage_conn": sage_conn, "sage_region": sage_region, "sage": sage}
+GRAPH_MODELS = {"ntac", "profile_lr", "profile_lr_iter", "profile_linear", "profile_linear_iter",
+                "sage_conn", "sage_region", "sage"}

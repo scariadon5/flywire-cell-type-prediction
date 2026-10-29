@@ -5,7 +5,7 @@ else
 	PY ?= .venv/bin/python
 endif
 
-.PHONY: setup data download convert build check explore clean-data splits baselines graph-models report test
+.PHONY: setup data download convert build check explore clean-data splits baselines graph-models gnn report test
 
 setup:
 	$(PY) -m pip install -r requirements.txt
@@ -45,6 +45,11 @@ baselines:
 graph-models:
 	$(PY) -m flyct.run --method ntac --task cell_type --split all
 	$(PY) -m flyct.run --method profile_lr profile_lr_iter --task super_class cell_class --split all
+
+# Week 3: GraphSAGE and its feature ablations. 3-5 s per epoch on a 4-core laptop CPU (~10-15 min a run), so the full grid
+# goes to the Kaggle notebook (GPU); this target is the one-split check that the model works locally.
+gnn:
+	$(PY) -m flyct.run --method sage_conn sage_region sage --task super_class cell_class --split frac20_r0
 
 # results/runs.jsonl -> results/results.md
 report:

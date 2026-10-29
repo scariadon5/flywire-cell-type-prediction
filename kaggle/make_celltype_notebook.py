@@ -1,4 +1,5 @@
-"""Generates flyct_celltype.ipynb, the Kaggle notebook for every cell-type run that doesn't fit a laptop.
+"""Generates flyct_celltype.ipynb, the Kaggle notebook for runs that don't fit a laptop: every cell-type
+run, and the GraphSAGE grid (set METHODS and TASKS in the first cell).
 
 On Kaggle: New Notebook -> File -> Import Notebook -> this .ipynb. Settings: Internet on (needs a
 phone-verified account), accelerator GPU T4 x2 or none. If the GitHub repo is private, add a Kaggle
@@ -18,14 +19,15 @@ import nbformat as nbf
 md, code = nbf.v4.new_markdown_cell, nbf.v4.new_code_cell
 
 cells = [
-    md("""# flyct · cell-type runs on Kaggle
+    md("""# flyct · runs on Kaggle
 
-Rebuilds the FlyWire graph and the saved splits from scratch, then runs the cell-type models that need
-more than a laptop's memory. Results go to `/kaggle/working/runs_kaggle.jsonl`."""),
+Rebuilds the FlyWire graph and the saved splits from scratch, then runs the models that need more than a
+laptop: cell-type models, and GraphSAGE on a GPU. Results go to `/kaggle/working/runs_kaggle.jsonl`."""),
     code("""REPO = "scariadon5/flywire-cell-type-prediction"
 BRANCH = "main"
-METHODS = "profile_linear profile_linear_iter"
-SPLITS = "all"   # or e.g. "frac20 hemi"
+METHODS = "sage_conn sage_region sage"            # cell-type partner profile: "profile_linear profile_linear_iter"
+TASKS = "super_class cell_class cell_type"        # ... with TASKS = "cell_type"
+SPLITS = "all"                                    # or e.g. "frac20 hemi"
 
 try:
     from kaggle_secrets import UserSecretsClient
@@ -47,11 +49,11 @@ url = f"https://{token}@github.com/{REPO}.git" if token else f"https://github.co
     code("""import torch, os
 print("device:", "cuda" if torch.cuda.is_available() else "cpu", "| threads:", torch.get_num_threads())
 before = sum(1 for _ in open("results/runs.jsonl"))
-!python -m flyct.run --method {METHODS} --task cell_type --split {SPLITS}"""),
+!python -m flyct.run --method {METHODS} --task {TASKS} --split {SPLITS}"""),
     code("""lines = open("results/runs.jsonl").read().splitlines()[before:]
 open("/kaggle/working/runs_kaggle.jsonl", "w").write("\\n".join(lines) + "\\n")
 print(f"{len(lines)} new runs saved to /kaggle/working/runs_kaggle.jsonl")
-!python -m flyct.report | sed -n '/Cell type/,$p'"""),
+!python -m flyct.report"""),
 ]
 
 nb = nbf.v4.new_notebook(cells=cells, metadata={
