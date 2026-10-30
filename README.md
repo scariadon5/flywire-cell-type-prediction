@@ -6,13 +6,14 @@ Given a fraction of labelled neurons, predict the type of every other neuron fro
 Compare feature models, a graph neural network and the published NTAC method, and ask whether
 non-connectivity features (where synapses sit, predicted neurotransmitters) help where accuracy is lowest.
 
-> **Status: Week 2 done (splits, baselines, NTAC reproduction, cell-type runs on Kaggle). Next: a graph
-> neural network (Week 3).**
+> **Status: Week 3 done (GraphSAGE and feature ablations on every split, [ADR-002](docs/adr/002-gnn-and-ablations.md)).
+> Next: region features in the partner-profile model, then the interactive explorer (Week 4).**
 
 ## Results so far
 
 Test accuracy (%), mean ± sd over 5 random splits. Full tables, macro F1 and top-5: [results/results.md](results/results.md).
-Split design and leakage rules: [ADR-001](docs/adr/001-splits-and-leakage.md).
+Split design and leakage rules: [ADR-001](docs/adr/001-splits-and-leakage.md). GNN design and
+ablations: [ADR-002](docs/adr/002-gnn-and-ablations.md).
 
 **Cell type (8,840 types) on the whole-brain graph**
 
@@ -21,19 +22,22 @@ Split design and leakage rules: [ADR-001](docs/adr/001-splits-and-leakage.md).
 | NTAC, accuracy | 58.9 ± 4.7 | 61.1 ± 6.3 | 92.1 ± 0.1 | 94.2 ± 0.1 | 76.3 | 86.3 |
 | NTAC, top-5 accuracy | 75.0 ± 3.4 | 76.9 ± 5.1 | 97.2 ± 0.0 | 98.1 ± 0.1 | 89.8 | 93.3 |
 | Partner-profile linear, iterated | 17.1 ± 0.4 | 14.7 ± 4.0 | 90.9 ± 0.1 | 94.2 ± 0.3 | 30.1 | 28.3 |
+| GraphSAGE, all features | 42.4 ± 2.3 | 40.0 ± 0.7 | 87.9 ± 0.2 | 91.5 ± 0.4 | **86.2** | 81.1 |
 
 The partner-profile model is a linear layer on NTAC's features, with partners refilled from its own
-predictions for 3 rounds; it was trained on Kaggle ([notebook](kaggle/flyct_celltype.ipynb)).
+predictions for 3 rounds. It and GraphSAGE were trained on Kaggle ([notebook](kaggle/flyct_celltype.ipynb)).
 
 At 20% seeds: optic lobe 96.3%, central brain 84.7%. At 1% and 5% every type gets exactly one seed
 (8,840 seeds, 6.4% of neurons), so a type of 8,452 photoreceptors is matched against a single example.
 
-**Super class (10) and class (49), LightGBM on per-neuron features**
+**Super class (10) and class (49): GraphSAGE against LightGBM on per-neuron features**
 
-| Task | 1% | 5% | 20% | 80% | Left → right | Right → left |
+| Task, model | 1% | 5% | 20% | 80% | Left → right | Right → left |
 | --- | --- | --- | --- | --- | --- | --- |
-| Super class | 95.6 ± 0.1 | 96.3 ± 0.8 | 97.1 ± 0.3 | 97.5 ± 0.1 | 96.8 | 96.9 |
-| Class | 86.0 ± 6.8 | 87.0 ± 0.4 | 90.7 ± 0.6 | 92.6 ± 0.2 | 91.4 | 86.4 |
+| Super class, GraphSAGE | **95.7 ± 0.1** | **97.3 ± 0.1** | **98.4 ± 0.1** | **98.8 ± 0.1** | **98.7** | **98.0** |
+| Super class, LightGBM | 95.6 ± 0.1 | 96.3 ± 0.8 | 97.1 ± 0.3 | 97.5 ± 0.1 | 96.8 | 96.9 |
+| Class, GraphSAGE | **93.4 ± 0.3** | **97.1 ± 0.2** | **98.2 ± 0.1** | **98.6 ± 0.2** | **98.4** | **95.7** |
+| Class, LightGBM | 86.0 ± 6.8 | 87.0 ± 0.4 | 90.7 ± 0.6 | 92.6 ± 0.2 | 91.4 | 86.4 |
 
 Majority-class floors: 55.7% (super class), 20.8% (class), 6.5% (cell type at 20% seeds).
 
@@ -82,6 +86,36 @@ Two things came out of the comparison:
   seeds at 69.6%, the left from right seeds at 89.5%; the central brain is symmetric (about 89% both
   ways). Open question for the error analysis.
 
+### Week 3 findings: a graph neural network
+
+GraphSAGE (`src/flyct/gnn.py`, plain PyTorch) aggregates upstream and downstream partners separately and
+takes seed labels as an input: in each training step half the seeds show their label and the other half
+supply the loss, so the first layer learns a compressed partner-type profile. Three ablations ran on every
+split (198 runs, 1.8 hours on a Kaggle T4):
+
+| Cell type, accuracy | 1% | 20% | 80% | Left → right | Right → left |
+| --- | --- | --- | --- | --- | --- |
+| Seed labels + degree counts | 22.7 ± 10.8 | 81.9 ± 0.5 | 90.0 ± 0.4 | 28.6 | 25.5 |
+| + brain-region features | 40.2 ± 1.3 | 87.3 ± 0.2 | 90.7 ± 0.9 | 82.8 | 77.2 |
+| + neurotransmitter features | 42.4 ± 2.3 | 87.9 ± 0.2 | 91.5 ± 0.4 | 86.2 | 81.1 |
+| NTAC | **58.9 ± 4.7** | **92.1 ± 0.1** | **94.2 ± 0.1** | 76.3 | **86.3** |
+
+- **For coarse labels, labels-as-input plus message passing is the best model.** On class it beats
+  LightGBM by 7.5 points at 20% seeds (98.2% vs 90.7%) and by 7.4 at 1%. LightGBM sees the neuron but not
+  its partners' labels; the partner-profile models see the labels but are linear and break under
+  hemisphere transfer.
+- **Brain-region features are what carry hemisphere transfer.** Without them, class accuracy from left to
+  right is 47.8%; with them, 98.3%. The other hemisphere has few labelled partners, so the neuron's own
+  synapse locations (mirrored to ipsi/contra) do the work. Neurotransmitter features add 0.1–3.9 points.
+- **On cell type the GNN loses to NTAC, where types are rare or defined by partners.** At 20% seeds it
+  trails by 18 points in the central brain (66.7% vs 84.7%) and 25 points on types with 2 neurons, but ties
+  on the optic lobe (96.2% vs 96.3%). Macro F1 is 55 against NTAC's 82 and barely moves with more seeds.
+  The likely cause: NTAC keeps one dimension per type and matches the nearest seed, while the GNN squeezes
+  8,840 types into 128 numbers, averages them over partners, and must learn a softmax over classes that
+  mostly have 1–3 seeds.
+- **The exception is left → right transfer** (86.2% vs 76.3%), won on the optic lobe (94.0% vs 69.6%),
+  the one place NTAC is weak.
+
 ## Quickstart
 
 ```bash
@@ -92,6 +126,7 @@ gmake explore                   # execute notebooks/01_exploration.ipynb
 gmake splits                    # saved seed/val/test splits, checked against data/splits_report.json
 gmake baselines                 # majority + LightGBM, super class and class
 gmake graph-models              # NTAC (cell type) + partner-profile LR (super class, class)
+gmake gnn                       # GraphSAGE + ablations on one split (full grid: Kaggle notebook)
 gmake report                    # results/runs.jsonl -> results/results.md
 gmake test
 ```
@@ -186,12 +221,13 @@ src/flyct/graph.py        thresholded adjacency as a sparse matrix
 src/flyct/ntac.py         seeded NTAC, numba, memory-light
 src/flyct/models.py       majority, LightGBM, NTAC, partner-profile logistic regression
 src/flyct/torch_models.py partner-profile LR for 8,840 classes (sparse gradients)
+src/flyct/gnn.py          GraphSAGE with seed labels as input, sparse CSR message passing
 src/flyct/metrics.py      accuracy, top-5, weighted/macro F1, ECE, by region and type size
 src/flyct/run.py          run models on splits; log to MLflow and results/runs.jsonl
 src/flyct/report.py       results tables
 scripts/                  NTAC reproduction against the reference package and paper
-kaggle/                   notebook for cell-type runs that need more than a laptop
-tests/                    NTAC against a brute-force implementation
+kaggle/                   notebook for runs that need more than a laptop (cell type, GNN grid)
+tests/                    NTAC against a brute-force implementation; GNN on a synthetic graph
 notebooks/                exploration (01_exploration.ipynb is generated by make_01_exploration.py)
 docs/                     project plan, ADRs, figures
 ```
